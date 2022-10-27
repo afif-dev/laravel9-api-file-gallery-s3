@@ -21,13 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,30');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,30');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum')->middleware('throttle:10,30');
 
-Route::post('/forgot-password', [AuthController::class, 'forgetPassword'])->middleware('guest');
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('guest');
+Route::post('/forgot-password', [AuthController::class, 'forgetPassword'])->middleware('guest')->middleware('throttle:5,30');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('guest')->middleware('throttle:10,30');
 
-Route::get('/profile', [AuthController::class, 'profile'])->middleware('auth:sanctum', 'throttle:5,1');
+Route::get('/profile', [AuthController::class, 'profile'])->middleware('auth:sanctum', 'throttle:10,1');
 
-Route::resource('/file-gallery', FileGalleryController::class)->middleware('auth:sanctum'); //->middleware('throttle:5,1');
+Route::resource('/file-gallery', FileGalleryController::class)->middleware('auth:sanctum');
